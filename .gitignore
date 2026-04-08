@@ -1,0 +1,51 @@
+# 编译输出
+bin/
+obj/
+out/
+publish/
+*.dll
+*.pdb
+*.exe
+
+# 替换资源文件
+替换mod/
+*.bundle
+
+# 旧版本和临时文件（不需要上传）
+mod1/
+mods/
+migration-temp/
+plans/
+
+# 临时文件
+*.tmp
+*.temp
+*.log
+*.cache
+
+# IDE配置
+.vs/
+.vscode/
+*.user
+*.suo
+
+# 敏感信息
+*.key
+*.pem
+*.pfx
+secrets.json
+appsettings.Development.json
+
+# 压缩包
+*.zip
+*.rar
+*.7z
+
+# 媒体文件（预览视频等）
+*.mp4
+*.avi
+*.mov
+
+# 其他
+.DS_Store
+Thumbs.db

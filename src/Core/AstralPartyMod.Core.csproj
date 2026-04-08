@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>AstralPartyMod.Core</AssemblyName>
+    <RootNamespace>AstralPartyMod.Core</RootNamespace>
+    <Description>星引擎MelonLoader Mod核心库</Description>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,64 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>10.0</LangVersion>
+    
+    <!-- MelonLoader路径 - 请根据实际路径修改 -->
+    <MelonLoaderPath>F:\dowmload\steamapps\common\Astral Party\8vJXn6CN\MelonLoader</MelonLoaderPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <!-- MelonLoader核心 -->
+    <Reference Include="MelonLoader">
+      <HintPath>$(MelonLoaderPath)\net6\MelonLoader.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    
+    <!-- Harmony -->
+    <Reference Include="0Harmony">
+      <HintPath>$(MelonLoaderPath)\net6\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    
+    <!-- Il2CppInterop -->
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>$(MelonLoaderPath)\net6\Il2CppInterop.Runtime.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2CppInterop.Common">
+      <HintPath>$(MelonLoaderPath)\net6\Il2CppInterop.Common.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    
+    <!-- Unity引擎核心 -->
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(MelonLoaderPath)\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(MelonLoaderPath)\Il2CppAssemblies\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(MelonLoaderPath)\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>$(MelonLoaderPath)\Il2CppAssemblies\UnityEngine.JSONSerializeModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(MelonLoaderPath)\Il2CppAssemblies\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    
+    <!-- Il2Cpp mscorlib -->
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(MelonLoaderPath)\Il2CppAssemblies\Il2Cppmscorlib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
