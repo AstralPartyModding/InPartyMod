@@ -27,7 +27,7 @@ dotnet build
 # 4. 发布！
 ```
 
-详细开发指南：[查看文档](https://github.com/AstralPartyModding/Docs)
+详细开发指南：[查看文档](https://github.com/AstralPartyModding/InPartyDocs)
 
 ## 项目结构
 
@@ -53,13 +53,13 @@ InPartyMod/
 | 仓库 | 说明 |
 |------|------|
 | [InPartyMod](https://github.com/AstralPartyModding/InPartyMod) | 主项目（本仓库）- 包含完整Core代码 |
-| [@ModManager](https://github.com/AstralPartyModding/ModManager) | 游戏内Mod管理器 |
+| [@ModManager](https://github.com/AstralPartyModding/InPartyModManager) | 游戏内Mod管理器 |
 | [Template](https://github.com/AstralPartyModding/Template) | Mod开发模板 |
-| [Docs](https://github.com/AstralPartyModding/Docs) | 文档和Mod索引 |
+| [InPartyDocs](https://github.com/AstralPartyModding/InPartyDocs) | 文档和Mod索引 |
 
 ## 社区Mod
 
-查看 [Mod索引](https://github.com/AstralPartyModding/Docs/blob/main/registry.md) 发现更多社区Mod。
+查看 [Mod索引](https://github.com/AstralPartyModding/InPartyDocs/blob/main/registry/registry.json) 发现更多社区Mod。
 
 ## 许可证
 
