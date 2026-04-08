@@ -2,23 +2,12 @@
 
 ## 已完成 ✅
 - [x] InPartyMod (主框架) 已推送到 GitHub
+- [x] InPartyModManager 已链接为子模块
 
 ## 待完成
 
-### 1. 链接 InPartyModManager 为子模块
+### 1. 推送 Template 到 Organization
 
-```bash
-# 进入InPartyMod目录
-cd e:/git/astparty/InPartyMod
-
-# 添加子模块
-git submodule add https://github.com/AstralPartyModding/InPartyModManager.git @ModManager
-
-# 提交
-git add .gitmodules @ModManager
-git commit -m "Add InPartyModManager as submodule"
-git push
-```
 
 ### 2. 推送 Template 到 Organization
 
