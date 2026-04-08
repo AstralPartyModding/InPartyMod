@@ -1,0 +1,3 @@
+[submodule "@ModManager"]
+	path = @ModManager
+	url = https://github.com/AstralPartyModding/InPartyModManager.git
