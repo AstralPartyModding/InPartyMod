@@ -2,7 +2,20 @@
 
 ## 已完成 ✅
 - [x] InPartyMod (主框架) 已推送到 GitHub
-- [x] InPartyModManager 已链接为子模块
+- [x] InPartyModManager 已链接为子模块 (@ModManager)
+
+## 当前架构状态
+
+```
+AstralPartyModding/
+├── InPartyMod/              ✅ 已完成
+│   ├── src/Core/            ✅ Core库
+│   ├── mods/                ✅ 官方Mod示例
+│   └── @ModManager/          ✅ 子模块链接
+├── InPartyModManager/       ✅ 独立仓库
+├── Template/                ⏳ 待创建
+└── InPartyDocs/             ⏳ 待创建
+```
 
 ## 待完成
 
