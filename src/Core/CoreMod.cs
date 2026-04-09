@@ -9,124 +9,46 @@ using System.Text.Json;
 
 namespace AstralPartyMod.Core
 {
-    /// <summary>
-    /// Mod基类 - 所有星引擎Mod的基类
-    /// </summary>
     public abstract class CoreMod : MelonMod
     {
-        #region 抽象属性 - 子类必须实现
-        
-        /// <summary>
-        /// Mod名称
-        /// </summary>
         protected abstract string ModName { get; }
-        
-        /// <summary>
-        /// Mod版本
-        /// </summary>
         protected abstract string ModVersion { get; }
-        
-        /// <summary>
-        /// Mod作者
-        /// </summary>
         protected abstract string ModAuthor { get; }
-        
-        /// <summary>
-        /// 资源目录列表（相对于Mod目录）
-        /// </summary>
         protected abstract string[] ResourceDirectories { get; }
-        
-        #endregion
-        
-        #region 可选重写属性
-        
-        /// <summary>
-        /// 热重载按键（默认F10）
-        /// </summary>
+
         protected virtual KeyCode ReloadKey => KeyCode.F10;
-        
-        /// <summary>
-        /// 是否启用统计功能
-        /// </summary>
         protected virtual bool EnableStatistics => false;
-        
-        /// <summary>
-        /// 统计信息显示按键（仅在EnableStatistics为true时有效）
-        /// </summary>
-        protected virtual KeyCode StatisticsKey => KeyCode.F12;
-        
-        /// <summary>
-        /// 是否启用详细日志
-        /// </summary>
         protected virtual bool EnableDetailedLogging => false;
-        
-        #endregion
-        
-        #region 核心组件
-        
-        /// <summary>
-        /// 资源替换器
-        /// </summary>
+        protected virtual bool UseCategoricalResources => false;
+
         public ResourceReplacer ResourceReplacer { get; private set; } = null!;
-        
-        /// <summary>
-        /// 配置实例
-        /// </summary>
+        protected PreloadReplacementManager? PreloadManager { get; private set; }
         protected ModConfigBase Config { get; private set; } = new ModConfigBase();
-        
-        #endregion
-        
-        #region 统计信息
-        
+
         private int _replacedCount = 0;
         private int _totalResources = 0;
-        
-        /// <summary>
-        /// 获取替换次数
-        /// </summary>
+
         public int ReplacedCount => _replacedCount;
-        
-        /// <summary>
-        /// 获取总资源数
-        /// </summary>
         public int TotalResources => _totalResources;
-        
-        #endregion
-        
-        #region 生命周期方法
-        
+
         public override void OnInitializeMelon()
         {
             MelonLogger.Msg("========================================");
             MelonLogger.Msg($"{ModName} v{ModVersion}");
             MelonLogger.Msg($"作者: {ModAuthor}");
             MelonLogger.Msg("========================================");
-            
+
             try
             {
-                // 基类MelonMod已经初始化了HarmonyInstance
-                // 加载配置
                 LoadConfig();
-                
-                // 初始化资源替换器
                 ResourceReplacer = new ResourceReplacer();
                 ResourceReplacer.OnResourceReplaced += () => _replacedCount++;
-                
-                // 扫描资源
                 ScanResources();
-                
-                // 应用Harmony补丁
+                ExecutePreloadReplacement();
                 ApplyPatches();
-                
-                // 注册到全局替换器
                 AssetBundlePatches.RegisterMod(this);
-                
                 MelonLogger.Msg($"已加载 {_totalResources} 个资源，可替换 {ResourceReplacer.Count} 个");
                 MelonLogger.Msg($"按 {ReloadKey} 重新加载资源");
-                if (EnableStatistics)
-                {
-                    MelonLogger.Msg($"按 {StatisticsKey} 显示统计信息");
-                }
             }
             catch (Exception ex)
             {
@@ -134,44 +56,36 @@ namespace AstralPartyMod.Core
                 MelonLogger.Error(ex.StackTrace);
             }
         }
-        
+
         public override void OnUpdate()
         {
-            // 热重载
             if (Input.GetKeyDown(ReloadKey))
-            {
                 ReloadResources();
-            }
-            
-            // 显示统计
-            if (EnableStatistics && Input.GetKeyDown(StatisticsKey))
-            {
-                ShowStatistics();
-            }
         }
-        
+
         public override void OnDeinitializeMelon()
         {
+            RestoreOriginalAssets();
             HarmonyInstance?.UnpatchSelf();
             AssetBundlePatches.UnregisterMod(this);
             MelonLogger.Msg($"{ModName}已卸载，本次共替换了 {_replacedCount} 次资源");
         }
-        
-        #endregion
-        
-        #region 资源管理
-        
-        /// <summary>
-        /// 扫描资源目录
-        /// </summary>
+
         protected virtual void ScanResources()
         {
-            string modDir = GetModDirectory();
+            if (UseCategoricalResources && Config.Categories.Count > 0)
+                ScanCategoricalResources();
+            else
+                ScanTraditionalResources();
+        }
+
+        protected virtual void ScanTraditionalResources()
+        {
+            string resourcesDir = GetModResourcesDirectory();
             _totalResources = 0;
-            
             foreach (var dirName in ResourceDirectories)
             {
-                string fullPath = Path.Combine(modDir, dirName);
+                string fullPath = Path.Combine(resourcesDir, dirName);
                 if (Directory.Exists(fullPath))
                 {
                     var files = Directory.GetFiles(fullPath, "*.bundle", SearchOption.TopDirectoryOnly);
@@ -179,26 +93,11 @@ namespace AstralPartyMod.Core
                     {
                         string fileName = Path.GetFileName(file);
                         _totalResources++;
-                        
-                        // 检查是否有自定义映射
                         if (Config.ResourceMappings.TryGetValue(fileName, out string? targetName) && !string.IsNullOrEmpty(targetName))
-                        {
                             ResourceReplacer.AddReplacement(targetName, file);
-                            if (EnableDetailedLogging)
-                            {
-                                MelonLogger.Msg($"[{dirName}] {fileName} -> 替换 {targetName}");
-                            }
-                        }
                         else
-                        {
                             ResourceReplacer.AddReplacement(fileName, file);
-                            if (EnableDetailedLogging)
-                            {
-                                MelonLogger.Msg($"[{dirName}] {fileName}");
-                            }
-                        }
                     }
-                    
                     MelonLogger.Msg($"{dirName}目录: {files.Length} 个文件");
                 }
                 else
@@ -208,43 +107,69 @@ namespace AstralPartyMod.Core
                 }
             }
         }
-        
-        /// <summary>
-        /// 重新加载资源
-        /// </summary>
+
+        protected virtual void ScanCategoricalResources()
+        {
+            string resourcesDir = GetModResourcesDirectory();
+            _totalResources = 0;
+            foreach (var kvp in Config.Categories)
+            {
+                string categoryName = kvp.Key;
+                var category = kvp.Value;
+                if (!category.Enabled)
+                {
+                    MelonLogger.Msg($"[分类] {categoryName} 已禁用，跳过扫描");
+                    continue;
+                }
+                string dirPath = string.IsNullOrEmpty(category.Path) ? categoryName : category.Path;
+                string fullPath = Path.Combine(resourcesDir, dirPath);
+                if (Directory.Exists(fullPath))
+                {
+                    int categoryResourceCount = ScanCategory(categoryName, category, fullPath);
+                    MelonLogger.Msg($"[分类] {categoryName}: {categoryResourceCount} 个资源 ({category.Description})");
+                }
+                else
+                {
+                    MelonLogger.Warning($"[分类] {categoryName} 目录不存在: {fullPath}");
+                }
+            }
+        }
+
+        protected virtual int ScanCategory(string categoryName, ResourceCategory category, string fullPath)
+        {
+            int count = 0;
+            var files = Directory.GetFiles(fullPath, "*.bundle", SearchOption.TopDirectoryOnly);
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                _totalResources++;
+                count++;
+                string? targetName = null;
+                bool hasCategoryMapping = category.ResourceMappings.TryGetValue(fileName, out targetName) && !string.IsNullOrEmpty(targetName);
+                if (!hasCategoryMapping)
+                    Config.ResourceMappings.TryGetValue(fileName, out targetName);
+                if (!string.IsNullOrEmpty(targetName))
+                    ResourceReplacer.AddReplacement(targetName, file);
+                else
+                    ResourceReplacer.AddReplacement(fileName, file);
+            }
+            return count;
+        }
+
         protected virtual void ReloadResources()
         {
             MelonLogger.Msg("重新加载Mod资源...");
             ResourceReplacer.Clear();
             _replacedCount = 0;
+            if (UseCategoricalResources)
+                LoadConfig();
             ScanResources();
             MelonLogger.Msg($"已重新加载 {_totalResources} 个资源");
         }
-        
-        /// <summary>
-        /// 显示统计信息
-        /// </summary>
-        protected virtual void ShowStatistics()
-        {
-            MelonLogger.Msg("========================================");
-            MelonLogger.Msg($"{ModName} 统计信息");
-            MelonLogger.Msg($"总资源数: {_totalResources}");
-            MelonLogger.Msg($"已替换: {_replacedCount}");
-            MelonLogger.Msg($"替换率: {(TotalResources > 0 ? (ReplacedCount * 100 / TotalResources) : 0)}%");
-            MelonLogger.Msg("========================================");
-        }
-        
-        #endregion
-        
-        #region 配置管理
-        
-        /// <summary>
-        /// 加载配置
-        /// </summary>
+
         protected virtual void LoadConfig()
         {
             string configPath = Path.Combine(GetModDirectory(), "config.json");
-            
             if (File.Exists(configPath))
             {
                 try
@@ -262,14 +187,15 @@ namespace AstralPartyMod.Core
             else
             {
                 Config = new ModConfigBase();
-                SaveConfig();
                 MelonLogger.Msg("已创建默认配置文件");
             }
+            if (UseCategoricalResources)
+            {
+                InitializeDefaultCategories();
+                SaveConfig();
+            }
         }
-        
-        /// <summary>
-        /// 保存配置
-        /// </summary>
+
         protected virtual void SaveConfig()
         {
             string configPath = Path.Combine(GetModDirectory(), "config.json");
@@ -284,44 +210,65 @@ namespace AstralPartyMod.Core
                 MelonLogger.Error($"保存配置文件失败: {ex.Message}");
             }
         }
-        
-        #endregion
-        
-        #region Harmony补丁
-        
-        /// <summary>
-        /// 应用Harmony补丁
-        /// </summary>
+
+        protected virtual void InitializeDefaultCategories()
+        {
+            foreach (var dir in ResourceDirectories)
+            {
+                if (!Config.Categories.ContainsKey(dir))
+                {
+                    Config.Categories[dir] = new ResourceCategory
+                    {
+                        Path = dir,
+                        Description = $"{dir}资源",
+                        Enabled = true
+                    };
+                }
+            }
+        }
+
+        public Dictionary<string, ResourceCategory> GetCategories()
+        {
+            return new Dictionary<string, ResourceCategory>(Config.Categories);
+        }
+
+        public bool SetCategoryEnabled(string category, bool enabled)
+        {
+            bool result = Config.SetCategoryEnabled(category, enabled);
+            if (result)
+            {
+                SaveConfig();
+                MelonLogger.Msg($"分类 '{category}' 已{(enabled ? "启用" : "禁用")}");
+            }
+            return result;
+        }
+
+        public void SetCategory(string categoryName, ResourceCategory category)
+        {
+            Config.SetCategory(categoryName, category);
+            SaveConfig();
+        }
+
         protected virtual void ApplyPatches()
         {
             try
             {
-                // 获取AssetBundle.LoadFromFile方法
-                var loadFromFileMethod = typeof(AssetBundle).GetMethod("LoadFromFile", 
-                    new[] { typeof(string) });
-                
+                var loadFromFileMethod = typeof(AssetBundle).GetMethod("LoadFromFile", new[] { typeof(string) });
                 if (loadFromFileMethod != null)
                 {
-                    HarmonyInstance?.Patch(
-                        loadFromFileMethod,
-                        prefix: new HarmonyMethod(typeof(AssetBundlePatches), nameof(AssetBundlePatches.LoadFromFile_Prefix))
-                    );
+                    HarmonyInstance?.Patch(loadFromFileMethod,
+                        prefix: new HarmonyMethod(typeof(AssetBundlePatches), nameof(AssetBundlePatches.LoadFromFile_Prefix)));
                     MelonLogger.Msg("已补丁 AssetBundle.LoadFromFile");
                 }
-                
-                // 获取AssetBundle.LoadFromFileAsync方法
-                var loadFromFileAsyncMethod = typeof(AssetBundle).GetMethod("LoadFromFileAsync", 
-                    new[] { typeof(string) });
-                
+                var loadFromFileAsyncMethod = typeof(AssetBundle).GetMethod("LoadFromFileAsync", new[] { typeof(string) });
                 if (loadFromFileAsyncMethod != null)
                 {
-                    HarmonyInstance?.Patch(
-                        loadFromFileAsyncMethod,
-                        prefix: new HarmonyMethod(typeof(AssetBundlePatches), nameof(AssetBundlePatches.LoadFromFileAsync_Prefix))
-                    );
+                    HarmonyInstance?.Patch(loadFromFileAsyncMethod,
+                        prefix: new HarmonyMethod(typeof(AssetBundlePatches), nameof(AssetBundlePatches.LoadFromFileAsync_Prefix)));
                     MelonLogger.Msg("已补丁 AssetBundle.LoadFromFileAsync");
                 }
-                
+                AssetBundlePatches.TryPatchAddressables(HarmonyInstance!);
+                AssetBundlePatches.TryPatchResources(HarmonyInstance!);
                 MelonLogger.Msg("Harmony补丁应用成功");
             }
             catch (Exception ex)
@@ -330,35 +277,69 @@ namespace AstralPartyMod.Core
                 MelonLogger.Error(ex.StackTrace);
             }
         }
-        
-        #endregion
-        
-        #region 工具方法
-        
-        /// <summary>
-        /// 获取Mod目录路径
-        /// </summary>
+
         public static string GetModDirectory()
         {
             string? assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string? modDir = Path.GetDirectoryName(assemblyLocation);
-            
             if (string.IsNullOrEmpty(modDir) || !Directory.Exists(modDir))
-            {
                 modDir = Directory.GetCurrentDirectory();
-            }
-            
             return modDir;
         }
-        
-        /// <summary>
-        /// 尝试获取资源替换路径
-        /// </summary>
+
+        protected virtual string GetModResourcesDirectory()
+        {
+            string? assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string? modDir = Path.GetDirectoryName(assemblyLocation);
+            if (string.IsNullOrEmpty(modDir))
+                modDir = Directory.GetCurrentDirectory();
+            string? gameRoot = Directory.GetParent(modDir)?.FullName;
+            if (string.IsNullOrEmpty(gameRoot))
+                gameRoot = modDir;
+            string modName = GetType().Name;
+            return Path.Combine(gameRoot, "ModResources", modName);
+        }
+
         public bool TryGetReplacement(string fileName, out string? modPath)
         {
             return ResourceReplacer.TryGetReplacement(fileName, out modPath);
         }
-        
-        #endregion
+
+        protected virtual void ExecutePreloadReplacement()
+        {
+            try
+            {
+                if (ResourceReplacer.Count == 0)
+                {
+                    MelonLogger.Msg("[预替换] 没有需要替换的资源");
+                    return;
+                }
+                PreloadManager = new PreloadReplacementManager();
+                var replacements = ResourceReplacer.GetAllReplacements();
+                int replacedCount = PreloadManager.ExecutePreloadReplacement(replacements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+                _replacedCount = replacedCount;
+                MelonLogger.Msg($"[预替换] 启动时已完成 {replacedCount} 个资源的预替换");
+            }
+            catch (Exception ex)
+            {
+                MelonLogger.Error($"[预替换] 执行失败: {ex.Message}");
+            }
+        }
+
+        protected virtual void RestoreOriginalAssets()
+        {
+            try
+            {
+                if (PreloadManager == null)
+                    return;
+                MelonLogger.Msg("[预替换] 游戏退出，开始恢复原始资源...");
+                int restoredCount = PreloadManager.RestoreOriginalAssets();
+                MelonLogger.Msg($"[预替换] 已恢复 {restoredCount} 个原始资源");
+            }
+            catch (Exception ex)
+            {
+                MelonLogger.Error($"[预替换] 恢复失败: {ex.Message}");
+            }
+        }
     }
 }

@@ -48,4 +48,9 @@ appsettings.Development.json
 
 # 其他
 .DS_Store
+
+# 架构设计文档（开发完成后不上传）
+docs/*-Architecture.md
+docs/*-explanation.md
+docs/PRELOAD_*.md
 Thumbs.db
