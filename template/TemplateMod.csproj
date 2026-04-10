@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TemplateMod</AssemblyName>
+    <RootNamespace>TemplateMod</RootNamespace>
+    <Description>星引擎Mod模板</Description>
+    <Version>1.0.0</Version>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 引用AstralPartyMod.Core框架 -->
+    <!-- 从 template/ 目录出发，向上两级到 astparty/，然后进入 src/Core/ -->
+    <ProjectReference Include="..\src\Core\AstralPartyMod.Core.csproj" />
+  </ItemGroup>
+
+</Project>

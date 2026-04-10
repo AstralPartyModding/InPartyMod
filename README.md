@@ -18,18 +18,22 @@
 ### 开发者开发
 
 ```bash
-# 1. Fork模板仓库
-git clone https://github.com/AstralPartyModding/Template.git MyMod
+# 1. Fork本仓库
+git clone https://github.com/AstralPartyModding/InPartyMod.git
 
-# 2. 修改Mod属性（名称、版本、作者、资源路径）
-# 3. 编译并测试
+# 2. 使用模板创建新Mod
+cp -r template mods/MyMod
+cd mods/MyMod
+
+# 3. 修改Mod属性（名称、版本、作者、资源路径）
+# 4. 编译并测试
 dotnet build
 
-# 4. 运行打包脚本生成发布包
+# 5. 运行打包脚本生成发布包
 package.bat
 ```
 
-详细开发指南：[查看文档](docs/DEVELOPER_PACKAGING_GUIDE.md)
+详细开发指南：[查看文档](docs/DEVELOPER_PACKAGING_GUIDE.md) | [模板说明](template/README.md)
 
 ## 项目结构
 
@@ -41,6 +45,12 @@ InPartyMod/
 │   ├── ResourceReplacer.cs     # 资源映射管理
 │   ├── AssetBundlePatches.cs   # Harmony补丁（备用）
 │   └── ModConfigBase.cs        # 配置基类
+├── template/                    # Mod开发模板
+│   ├── TemplateMod.cs          # 模板主类
+│   ├── TemplateMod.csproj      # 项目文件
+│   ├── package.bat             # 打包脚本
+│   ├── README.md               # 模板说明
+│   └── resources/              # 资源目录示例
 ├── InPartyModManager/           # 游戏内Mod管理器（MelonLoader插件）
 ├── @ModManager/                # 桌面Mod管理器（WinForms）
 ├── mods/                       # 官方Mod示例
