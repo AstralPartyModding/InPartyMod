@@ -9,27 +9,35 @@
 一个标准的Mod发布包（ZIP文件）应包含以下内容：
 
 ```
-MyMod_v1.0.0.zip
-├── MyMod.dll              # Mod主程序（必需）
-├── README.txt             # Mod说明文件（推荐）
-├── Resources/             # 资源文件夹（可选）
-│   ├── Cards/
-│   │   └── card_001.png
-│   ├── Audio/
-│   │   └── bgm_001.ogg
-│   └── UI/
-│       └── button_bg.png
-└── [可选] Core.dll        # 如未安装InPartyMod主包
+MyMod-v1.0.0-for-Player.zip
+├── Mods/
+│   ├── MyMod.dll              # Mod主程序（必需）
+│   └── AstralPartyMod.Core.dll # 核心库（必需）
+└── ModResources/
+    └── MyMod/
+        ├── cards/             # 手牌卡图资源
+        ├── events/            # 事件卡图资源
+        └── config.json        # 分类配置
 ```
 
 ### 目录说明
 
 | 路径 | 说明 |
 |------|------|
-| `MyMod.dll` | Mod主程序文件，编译后的DLL |
-| `README.txt` | 纯文本格式的Mod说明文档 |
-| `Resources/` | 资源文件夹，包含图片、音频等替换资源 |
-| `Core.dll` | 可选，仅当用户未安装InPartyMod主包时需要 |
+| `Mods/MyMod.dll` | Mod主程序文件，编译后的DLL |
+| `Mods/AstralPartyMod.Core.dll` | 核心库，提供预替换功能 |
+| `ModResources/MyMod/` | Mod资源目录，包含替换资源 |
+| `config.json` | 分类配置文件 |
+
+### 使用package.bat自动打包
+
+每个Mod目录下都有 `package.bat` 脚本，双击运行即可自动生成标准ZIP包：
+
+```bash
+cd mods/MyMod
+package.bat
+# 生成: MyMod-v1.0.0-for-Player.zip
+```
 
 ---
 

@@ -26,13 +26,14 @@
 ### 方法1：使用模板（推荐）
 
 ```bash
-# 1. Fork模板仓库
-git clone https://github.com/AstralPartyModding/Template.git MyMod
+# 1. Fork InPartyMod仓库
+git clone https://github.com/AstralPartyModding/InPartyMod.git
 
-# 2. 进入项目
-cd MyMod
+# 2. 复制模板创建新Mod
+cp -r template mods/MyMod
+cd mods/MyMod
 
-# 3. 修改3个属性（MyMod.cs）
+# 3. 修改3个属性（TemplateMod.cs）
 #    - ModName: Mod名称
 #    - ModVersion: 版本号
 #    - ModAuthor: 作者名
@@ -40,7 +41,7 @@ cd MyMod
 # 4. 编译
 dotnet build
 
-# 5. 测试 - 将生成的DLL放入游戏Mods目录
+# 5. 打包 - 运行package.bat生成发布包
 ```
 
 ### 方法2：手动创建
@@ -78,6 +79,6 @@ public class MyMod : CoreMod
 | 资源 | 链接 |
 |------|------|
 | 主项目 | https://github.com/AstralPartyModding/InPartyMod |
-| 开发模板 | https://github.com/AstralPartyModding/Template |
+| 开发模板 | [template/](../template/) 目录（已集成在主项目） |
 | 文档/Mod索引 | https://github.com/AstralPartyModding/InPartyDocs |
 | Mod管理器 | https://github.com/AstralPartyModding/InPartyModManager |
