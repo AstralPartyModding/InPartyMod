@@ -6,6 +6,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>10.0</LangVersion>
     
+    <!-- 版本信息 -->
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0</AssemblyVersion>
+    <FileVersion>0.1.0</FileVersion>
+    
     <!-- MelonLoader路径 - 请根据实际路径修改 -->
     <MelonLoaderPath>F:\dowmload\steamapps\common\Astral Party\8vJXn6CN\MelonLoader</MelonLoaderPath>
   </PropertyGroup>

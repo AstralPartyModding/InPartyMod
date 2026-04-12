@@ -1,8 +1,11 @@
 # InPartyMod - 星引擎Mod开发框架
 
+**版本: v0.1.0**
+
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MelonLoader](https://img.shields.io/badge/MelonLoader-0.6+-orange.svg)](https://melonloader.com)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-blue.svg)]()
+[![Version](https://img.shields.io/badge/Version-0.1.0-green.svg)]()
 
 > 基于MelonLoader的星引擎（Astral Party）Mod开发框架，支持预加载资源替换，让Mod开发更简单。
 

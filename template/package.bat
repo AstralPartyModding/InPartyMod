@@ -24,7 +24,7 @@ if errorlevel 1 (
 echo [OK] 编译成功
 echo.
 
-:: 查找DLL文件路径
+:: 查找DLL文件路径（支持多位置查找核心dll）
 set "DLL_PATH="
 set "CORE_DLL_PATH="
 
@@ -32,8 +32,24 @@ for /f "delims=" %%F in ('dir /s /b bin\Release\%MOD_NAME%.dll 2^>nul') do (
     set "DLL_PATH=%%F"
 )
 
+:: 在多个位置查找AstralPartyMod.Core.dll
+:: 1. 首先查找当前mod的输出目录
 for /f "delims=" %%F in ('dir /s /b bin\Release\AstralPartyMod.Core.dll 2^>nul') do (
     set "CORE_DLL_PATH=%%F"
+)
+
+:: 2. 如果没找到，查找核心项目的编译输出目录
+if "!CORE_DLL_PATH!"=="" (
+    for /f "delims=" %%F in ('dir /s /b ..\..\src\Core\bin\Release\net*\AstralPartyMod.Core.dll 2^>nul') do (
+        set "CORE_DLL_PATH=%%F"
+    )
+)
+
+:: 3. 如果还没找到，查找根目录的out目录
+if "!CORE_DLL_PATH!"=="" (
+    for /f "delims=" %%F in ('dir /s /b ..\..\out\AstralPartyMod.Core.dll 2^>nul') do (
+        set "CORE_DLL_PATH=%%F"
+    )
 )
 
 :: 步骤2: 创建临时目录

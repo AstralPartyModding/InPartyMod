@@ -4,15 +4,18 @@
 
 ---
 
-## 一、推荐打包结构
+## 一、支持的打包结构
 
-一个标准的Mod发布包（ZIP文件）应包含以下内容：
+核心库 `AstralPartyMod.Core.dll` 支持**所有常见打包结构**，都会自动识别找到资源目录：
 
+---
+
+### 格式1：传统格式（推荐）
 ```
 MyMod-v1.0.0-for-Player.zip
 ├── Mods/
 │   ├── MyMod.dll              # Mod主程序（必需）
-│   └── AstralPartyMod.Core.dll # 核心库（必需）
+│   └── AstralPartyMod.Core.dll # 核心库（如果用户未安装）
 └── ModResources/
     └── MyMod/
         ├── cards/             # 手牌卡图资源
@@ -20,13 +23,61 @@ MyMod-v1.0.0-for-Player.zip
         └── config.json        # 分类配置
 ```
 
-### 目录说明
+### 格式2：直接格式（无mod名称子目录）
+```
+MyMod-v1.0.0-for-Player.zip
+├── Mods/
+│   ├── MyMod.dll
+│   └── AstralPartyMod.Core.dll
+└── ModResources/
+    ├── cards/      # 手牌卡图直接放在这里
+    ├── events/     # 事件卡图直接放在这里
+    └── config.json
+```
+> ✅ 这是你要求的格式，现在已完全支持。
+
+### 格式3：DLL同级格式（DLL在Mods根，资源在同名子目录）
+```
+解压到游戏目录后：
+F:/.../Mods/
+  ├── MyMod.dll      ← DLL直接放在Mods根目录
+  └── MyMod/        ← 资源放在同名子文件夹
+      └── ModResources/
+          ├── cards/
+          ├── events/
+          └── config.json
+```
+> ✅ 这是你实际使用的安装方式，现在已完全支持。
+
+### 格式4：子文件夹格式（DLL和资源都在子文件夹）
+```
+解压到游戏目录后：
+F:/.../Mods/
+  └── MyMod/        ← 整个Mod都放在这里
+      ├── MyMod.dll ← DLL在这里
+      └── ModResources/
+          ├── cards/
+          ├── events/
+          └── config.json
+```
+> ✅ 这是最常见的社区打包方式，现在已完全支持。
+
+---
+
+### 所有格式都能自动识别！
+核心库使用**多层级递归查找策略**，会按顺序尝试所有常见位置，只要资源存在就能找到，无需担心目录结构问题。
+
+---
+
+## 二、目录说明
 
 | 路径 | 说明 |
 |------|------|
 | `Mods/MyMod.dll` | Mod主程序文件，编译后的DLL |
-| `Mods/AstralPartyMod.Core.dll` | 核心库，提供预替换功能 |
-| `ModResources/MyMod/` | Mod资源目录，包含替换资源 |
+| `Mods/AstralPartyMod.Core.dll` | 核心库，提供预替换功能（用户已安装可省略） |
+| `ModResources/MyMod/` | Mod资源目录，包含替换资源（传统格式） |
+| `ModResources/` | 直接存放资源（直接格式） |
+| `MyMod/ModResources/` | 资源在DLL同级子目录（DLL同级格式） |
 | `config.json` | 分类配置文件 |
 
 ### 使用package.bat自动打包
