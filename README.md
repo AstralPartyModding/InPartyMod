@@ -1,4 +1,4 @@
-# InPartyMod - 星引擎Mod开发框架
+# AstralParty Mod - 星引擎Mod开发框架
 
 **版本: v0.1.0**
 
@@ -14,54 +14,40 @@
 ### 玩家使用
 
 1. 安装 [MelonLoader](https://melonloader.com) 到星引擎游戏
-2. 下载 [最新Release](https://github.com/AstralPartyModding/InPartyMod/releases)
-3. 将ZIP解压到游戏根目录（与游戏.exe同级）
+2. 下载 [最新Release](https://github.com/AstralPartyModding/astparty/releases)
+3. 将DLL文件放入游戏 `Mods` 目录
 4. 启动游戏，Mod自动生效
 
 ### 开发者开发
 
-```bash
-# 1. Fork本仓库
-git clone https://github.com/AstralPartyModding/InPartyMod.git
+```batch
+:: 1. Clone本仓库
+git clone https://github.com/AstralPartyModding/astparty.git
+cd astparty
 
-# 2. 使用模板创建新Mod
-cp -r template mods/MyMod
-cd mods/MyMod
+:: 2. 使用模板创建新Mod
+xcopy template mods\MyMod /E /I
+cd mods\MyMod
 
-# 3. 修改Mod属性（名称、版本、作者、资源路径）
-# 4. 编译并测试
-dotnet build
+:: 3. 修改Mod属性（名称、版本、作者）
+:: 4. 回到根目录编译
+cd ..\..
+build.bat
 
-# 5. 运行打包脚本生成发布包
-package.bat
+:: 编译完成后所有输出在 out 目录
 ```
-
-详细开发指南：[查看文档](docs/DEVELOPER_PACKAGING_GUIDE.md) | [模板说明](template/README.md)
 
 ## 项目结构
 
 ```
-InPartyMod/
-├── src/Core/                    # 核心库
-│   ├── CoreMod.cs              # Mod基类（继承MelonMod）
-│   ├── PreloadReplacementManager.cs  # 预替换管理器
-│   ├── ResourceReplacer.cs     # 资源映射管理
-│   ├── AssetBundlePatches.cs   # Harmony补丁（备用）
-│   └── ModConfigBase.cs        # 配置基类
-├── template/                    # Mod开发模板
-│   ├── TemplateMod.cs          # 模板主类
-│   ├── TemplateMod.csproj      # 项目文件
-│   ├── package.bat             # 打包脚本
-│   ├── README.md               # 模板说明
-│   └── resources/              # 资源目录示例
-├── InPartyModManager/           # 游戏内Mod管理器（MelonLoader插件）
-├── @ModManager/                # 桌面Mod管理器（WinForms）
-├── mods/                       # 官方Mod示例
-│   └── YuGiOhCardMod/          # 游戏王卡面Mod
-└── docs/                       # 文档
-    ├── DEVELOPER_PACKAGING_GUIDE.md
-    ├── USER_GUIDE.md
-    └── CATEGORICAL_RESOURCES.md
+astparty/
+├── Directory.Build.props     # 全局构建配置（含绑定重定向、MelonLoader路径）
+├── build.bat                 # 一键构建脚本（自动扫描mods目录）
+├── src/Core/                 # AstralPartyMod.Core 核心框架
+├── template/                 # Mod开发模板
+├── mods/                     # 本地Mod开发（.gitkeep保留目录，不包含实际Mod，不上传GitHub）
+├── @ModManager/              # Mod管理器（可选，Git子模块，不上传GitHub）
+└── out/                      # 构建输出目录（编译后的dll在这里）
 ```
 
 ## 核心特性
@@ -72,46 +58,25 @@ InPartyMod/
 - ✅ **多Mod共存** - 支持多个Mod同时加载，资源冲突自动处理
 - ✅ **极简开发** - 继承CoreMod基类，只需配置几个属性即可
 
-## 技术架构
-
-### 预替换系统
+## 预替换架构
 
 不同于传统的运行时拦截（Harmony补丁），本框架采用**预加载替换**架构：
 
-1. **启动时**：Mod在`OnInitializeMelon()`中执行预替换
-2. **备份**：原始资源自动备份到`.backup/`目录，附带JSON元数据
+1. **启动时**：Mod在初始化中执行预替换
+2. **备份**：原始资源自动备份到 `.backup/` 目录
 3. **替换**：将Mod资源复制到游戏资源目录
-4. **退出时**：`OnDeinitializeMelon()`自动恢复原始文件
+4. **退出时**：自动恢复原始文件
 
-这种架构的优势：
+优势：
 - 兼容Unity Addressables资源系统
 - 无需复杂的运行时补丁
 - 游戏更新后自动识别新资源
-
-### 资源目录结构
-
-```
-ModResources/
-└── {ModName}/
-    ├── cards/              # 手牌卡图
-    ├── events/             # 事件卡图
-    └── config.json         # 分类配置
-```
-
-## 相关仓库
-
-| 仓库 | 说明 |
-|------|------|
-| [InPartyMod](https://github.com/AstralPartyModding/InPartyMod) | 主项目（本仓库）- 包含Core库和示例Mod |
-| [InPartyModManager](https://github.com/AstralPartyModding/InPartyModManager) | 游戏内Mod管理器（MelonLoader插件） |
-| [@ModManager](https://github.com/AstralPartyModding/ModManager) | 桌面Mod管理器（WinForms应用） |
-| [Template](https://github.com/AstralPartyModding/Template) | Mod开发模板 |
 
 ## 系统要求
 
 - **操作系统**: Windows 10/11 (x64)
 - **游戏**: 星引擎 Party (Astral Party)
-- **依赖**: MelonLoader 0.6+
+- **依赖**: MelonLoader 0.6+ 且 .NET 6.0
 
 ## 许可证
 

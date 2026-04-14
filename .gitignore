@@ -1,19 +1,30 @@
 # 编译输出
-bin/
-obj/
+**/bin/
+**/obj/
 out/
 publish/
 *.dll
 *.pdb
 *.exe
 
-# 替换资源文件
+# 替换资源文件（用户使用时存放替换好的mod不需要上传
 替换mod/
 *.bundle
 
+# Mod管理器是独立仓库，这里不上传
+@ModManager/
+
+# 特定示例Mod不上传GitHub（GameSpeedMod保留在本地，使用SpeedHack）
+mods/GameSpeedMod/
+
+# 各个Mod自己的打包脚本不需要上传
+*/package.bat
+
+# mods目录整体不上传（用户自己的Mod都在这里）
+mods/
+
 # 旧版本和临时文件（不需要上传）
 mod1/
-mods/
 migration-temp/
 plans/
 
