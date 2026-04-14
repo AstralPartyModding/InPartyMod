@@ -13,4 +13,28 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
-  </Project>
+  <ItemGroup>
+    <PackageReference Include="HarmonyX" Version="2.12.0" />
+  </ItemGroup>
+
+  <!-- MelonLoader、UniverseLib和UnityExplorer通常从游戏目录引用 -->
+  <ItemGroup Condition="'$(GAME_DIR)' != ''">
+    <Reference Include="MelonLoader">
+      <HintPath>$(GAME_DIR)/MelonLoader/net6/MelonLoader.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Harmony">
+      <HintPath>$(GAME_DIR)/MelonLoader/net6/0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniverseLib">
+      <HintPath>$(GAME_DIR)/MelonLoader/plugins/UniverseLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityExplorer">
+      <HintPath>$(GAME_DIR)/MelonLoader/plugins/UnityExplorer.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

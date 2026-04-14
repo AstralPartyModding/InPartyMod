@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using MelonLoader;
 
-namespace AstralPartyMod.Core
+namespace AstralPartyMod.Core.Assets
 {
     public class ResourceReplacer
     {

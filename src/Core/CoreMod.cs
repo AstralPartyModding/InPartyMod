@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using AstralPartyMod.Core.Assets;
+using AstralPartyMod.Core.Configuration;
 
 namespace AstralPartyMod.Core
 {
@@ -23,7 +25,7 @@ namespace AstralPartyMod.Core
 
         public ResourceReplacer ResourceReplacer { get; private set; } = null!;
         protected PreloadReplacementManager? PreloadManager { get; private set; }
-        protected ModConfigBase Config { get; private set; } = new ModConfigBase();
+        public ModConfigBase Config { get; private set; } = new ModConfigBase();
 
         private int _replacedCount = 0;
         private int _totalResources = 0;

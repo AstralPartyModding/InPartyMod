@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace AstralPartyMod.Core
+namespace AstralPartyMod.Core.Configuration
 {
     [Serializable]
     public class ResourceCategory

@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace AstralPartyMod.Core
+namespace AstralPartyMod.Core.Assets
 {
     public static class AssetBundlePatches
     {

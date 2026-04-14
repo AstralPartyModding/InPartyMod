@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace AstralPartyMod.Core
+namespace AstralPartyMod.Core.Assets
 {
     public class PreloadReplacementManager
     {

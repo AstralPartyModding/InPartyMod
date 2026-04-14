@@ -14,14 +14,10 @@ publish/
 # Mod管理器是独立仓库，这里不上传
 @ModManager/
 
-# 特定示例Mod不上传GitHub（GameSpeedMod保留在本地，使用SpeedHack）
-mods/GameSpeedMod/
-
-# 各个Mod自己的打包脚本不需要上传
-*/package.bat
-
-# mods目录整体不上传（用户自己的Mod都在这里）
-mods/
+# mods目录只有_Template模板上传，其他内容不上传
+mods/*
+!mods/_Template/
+!mods/_Template/**
 
 # 旧版本和临时文件（不需要上传）
 mod1/

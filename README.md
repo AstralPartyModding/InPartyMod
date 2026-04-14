@@ -26,7 +26,7 @@ git clone https://github.com/AstralPartyModding/astparty.git
 cd astparty
 
 :: 2. 使用模板创建新Mod
-xcopy template mods\MyMod /E /I
+xcopy mods\_Template mods\MyMod /E /I
 cd mods\MyMod
 
 :: 3. 修改Mod属性（名称、版本、作者）
@@ -43,10 +43,9 @@ build.bat
 astparty/
 ├── Directory.Build.props     # 全局构建配置（含绑定重定向、MelonLoader路径）
 ├── build.bat                 # 一键构建脚本（自动扫描mods目录）
+├── LICENSE                   # MIT许可证
 ├── src/Core/                 # AstralPartyMod.Core 核心框架
-├── template/                 # Mod开发模板
-├── mods/                     # 本地Mod开发（.gitkeep保留目录，不包含实际Mod，不上传GitHub）
-├── @ModManager/              # Mod管理器（可选，Git子模块，不上传GitHub）
+├── mods/_Template/           # Mod开发模板
 └── out/                      # 构建输出目录（编译后的dll在这里）
 ```
 
@@ -77,6 +76,64 @@ astparty/
 - **操作系统**: Windows 10/11 (x64)
 - **游戏**: 星引擎 Party (Astral Party)
 - **依赖**: MelonLoader 0.6+ 且 .NET 6.0
+
+## 手动测试
+
+### 环境准备
+
+1. 安装 [MelonLoader 0.6+](https://melonloader.com) 到星引擎游戏目录
+2. 设置环境变量 `GAME_DIR` 指向你的游戏目录：
+```batch
+set GAME_DIR=F:\dowmload\steamapps\common\Astral Party\8vJXn6CN
+```
+
+### 编译框架
+
+```batch
+:: 清理并编译
+dotnet clean src/Core/AstralPartyMod.Core.csproj
+dotnet build src/Core/AstralPartyMod.Core.csproj --configuration Release
+```
+
+**预期结果**:
+- 编译成功，输出 `0 错误`
+- 可能有 `4 个警告`（Mono.Cecil版本冲突），不影响使用
+
+### 安装测试
+
+1. 复制编译输出 `bin\Release\net6.0\AstralPartyMod.Core.dll` 到游戏 `Mods` 目录
+2. 启动游戏，查看MelonLoader控制台输出
+
+**预期输出**:
+```
+[AstralPartyMod] OnInitializeMelon
+[HarmonyPatcher] 初始化完成，ID: AstralPartyMod.Core
+[ConfigManager] 创建配置目录: ...\UserData\Config
+[ConfigManager] 初始化完成
+[HarmonyPatcher] 成功应用 X 个补丁
+...
+```
+
+### 检查功能
+
+1. **Harmony补丁**: 框架会自动扫描并应用所有补丁，控制台会显示补丁数量
+2. **配置系统**: 启动后会在 `UserData/Config/` 目录创建配置文件夹
+3. **UnityExplorer**: 如果已安装UnityExplorer，按 `F7` 可打开调试面板
+4. **事件总线**: 游戏生命周期事件会自动广播，Mod可以订阅这些事件
+
+### 故障排除
+
+**编译错误: 找不到MelonLoader.dll**:
+- 确认 `GAME_DIR` 环境变量设置正确
+- 确认游戏目录下 `MelonLoader/net6/MelonLoader.dll` 存在
+
+**编译警告: Mono.Cecil版本冲突**:
+- 这是正常的，HarmonyX和MelonLoader使用不同版本的Mono.Cecil
+- 不影响运行，可以忽略
+
+**游戏启动失败: 文件找不到**:
+- 确认 `AstralPartyMod.Core.dll` 已复制到 `Mods` 目录
+- 确认游戏版本兼容 (.NET 6.0，MelonLoader 0.6+)
 
 ## 许可证
 

@@ -1,0 +1,8 @@
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.csproj.AssemblyReference.cache
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.csproj.SuggestedBindingRedirects.cache
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.dll.config
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.GeneratedMSBuildEditorConfig.editorconfig
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.AssemblyInfoInputs.cache
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.AssemblyInfo.cs
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.csproj.CoreCompileInputs.cache
+e:\git\astparty\mods\_Template\obj\Release\net6.0\TemplateMod.sourcelink.json
