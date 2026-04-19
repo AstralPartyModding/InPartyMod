@@ -1,44 +1,47 @@
 # Mod开发模板
 
-基于 [InPartyMod.Core](https://github.com/AstralPartyModding/InPartyMod) 的Mod开发模板。
+基于 AstralPartyMod.Core 框架的Mod开发模板。
 
-## 快速开始
+## 使用方法
 
-```bash
-# 1. Fork本仓库并改名
-git clone https://github.com/AstralPartyModding/Template.git MyMod
+1. 复制此目录到 `mods/YourModName/`
+2. 修改 `TemplateMod.csproj` 中的项目名称
+3. 修改 `TemplateMod.cs` 中的Mod信息
+4. 编译后放入游戏 `Mods` 目录
 
-# 2. 修改3个属性
-cd MyMod
-# - TemplateMod.cs: ModName, ModVersion, ModAuthor
-# - TemplateMod.csproj: AssemblyName, RootNamespace
+## 核心代码示例
 
-# 3. 编译
-dotnet build
+```csharp
+using MelonLoader;
+using AstralPartyMod.Core;
 
-# 4. 测试
-# 将生成的DLL放入游戏Mods目录
+namespace YourMod
+{
+    public class YourMod : CoreMod
+    {
+        protected override string ModName => "YourMod";
+        protected override string ModVersion => "1.0.0";
+        protected override string ModAuthor => "YourName";
+        protected override string[] ResourceDirectories => new[] { "cards", "events" };
+
+        public override void OnInitializeMelon()
+        {
+            base.OnInitializeMelon();
+            MelonLogger.Msg("Mod已加载！");
+        }
+    }
+}
 ```
 
-## 目录结构
+## 继承 CoreMod 获得的功能
 
-```
-MyMod/
-├── MyMod.csproj      # 项目文件
-├── MyMod.cs          # Mod代码（继承CoreMod）
-└── README.md         # 说明文档
-```
-
-游戏内目录：
-```
-Mods/
-├── MyMod.dll         # Mod文件
-└── MyMod/            # 数据目录
-    ├── config.json
-    └── Resources/    # 资源文件
-```
+- 自动资源管理和替换
+- 配置文件读写
+- 事件系统集成
+- Harmony补丁支持
+- 模块注册系统
 
 ## 更多信息
 
-- [开发文档](https://github.com/AstralPartyModding/Docs)
-- [API参考](https://github.com/AstralPartyModding/InPartyMod/tree/main/src/Core)
+- [API参考手册](../../docs/API_Reference.md)
+- [入门教程](../../docs/Getting_Started.md)

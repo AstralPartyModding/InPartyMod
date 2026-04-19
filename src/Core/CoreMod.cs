@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text.Json;
 using AstralPartyMod.Core.Assets;
 using AstralPartyMod.Core.Configuration;
+using AstralPartyMod.Core.Debugging;
+using AstralPartyMod.Core.Modules;
 
 namespace AstralPartyMod.Core
 {
@@ -48,7 +50,11 @@ namespace AstralPartyMod.Core
                 ScanResources();
                 ExecutePreloadReplacement();
                 ApplyPatches();
+                // Initialize UnityExplorer
+                UnityExplorerInit.Initialize(true);
+                UnityExplorerInit.Show();
                 AssetBundlePatches.RegisterMod(this);
+
                 MelonLogger.Msg($"已加载 {_totalResources} 个资源，可替换 {ResourceReplacer.Count} 个");
                 MelonLogger.Msg($"按 {ReloadKey} 重新加载资源");
             }
@@ -496,9 +502,13 @@ namespace AstralPartyMod.Core
                 }
                 PreloadManager = new PreloadReplacementManager();
                 var replacements = ResourceReplacer.GetAllReplacements();
-                int replacedCount = PreloadManager.ExecutePreloadReplacement(replacements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
-                _replacedCount = replacedCount;
-                MelonLogger.Msg($"[预替换] 启动时已完成 {replacedCount} 个资源的预替换");
+                var result = PreloadManager.ExecutePreloadReplacement(replacements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+                _replacedCount = result.ReplacedCount;
+                MelonLogger.Msg($"[预替换] 启动时已完成 {result.ReplacedCount} 个资源的预替换");
+                if (result.FailedCount > 0)
+                {
+                    MelonLogger.Error($"[预替换] {result.FailedCount} 个资源替换失败");
+                }
             }
             catch (Exception ex)
             {
@@ -513,8 +523,12 @@ namespace AstralPartyMod.Core
                 if (PreloadManager == null)
                     return;
                 MelonLogger.Msg("[预替换] 游戏退出，开始恢复原始资源...");
-                int restoredCount = PreloadManager.RestoreOriginalAssets();
-                MelonLogger.Msg($"[预替换] 已恢复 {restoredCount} 个原始资源");
+                var result = PreloadManager.RestoreOriginalAssets();
+                MelonLogger.Msg($"[预替换] 已恢复 {result.RestoredCount} 个原始资源");
+                if (result.FailedCount > 0)
+                {
+                    MelonLogger.Error($"[预替换] {result.FailedCount} 个资源恢复失败");
+                }
             }
             catch (Exception ex)
             {
